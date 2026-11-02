@@ -58,3 +58,7 @@ data/metadata/*
 
 # Preserve directory placeholders
 !.gitkeep
+
+# Locally extracted imaging and patient annotations
+data/processed/
+mesh/L1-L2_calculix.inp
