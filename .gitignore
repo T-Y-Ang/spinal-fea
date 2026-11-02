@@ -1,0 +1,60 @@
+# -------------------------------------------------------------
+# SPINAL FEA PROJECT — GIT IGNORE
+# -------------------------------------------------------------
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Conda / virtual environments
+.env
+.venv/
+venv/
+env/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Medical imaging datasets
+*.dcm
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+*.mhd
+*.raw
+
+# Large downloaded archives
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Patient-level metadata and downloaded dataset files
+data/metadata/*
+!data/metadata/.gitkeep
+
+# Generated geometry and meshes
+*.stl
+*.vtk
+*.vtu
+*.vti
+*.msh
+*.med
+
+# Solver-generated results
+*.frd
+*.dat
+*.sta
+*.cvg
+*.12d
+
+# Temporary and log files
+*.tmp
+*.log
+
+# Preserve directory placeholders
+!.gitkeep
