@@ -37,7 +37,55 @@ tetra_index = next(
     if block.type == "tetra"
 )
 
-tetra = mesh.cells[tetra_index].data
+tetra = mesh.cells[tetra_index].data.copy()
+
+# -------------------------------------------------------------
+# VALIDATE AND CORRECT TETRAHEDRAL ORIENTATION
+# -------------------------------------------------------------
+
+def signed_tetra_volumes(connectivity):
+    vertices = points[connectivity]
+
+    a = vertices[:, 0, :]
+    b = vertices[:, 1, :]
+    c = vertices[:, 2, :]
+    d = vertices[:, 3, :]
+
+    return np.einsum(
+        "ij,ij->i",
+        np.cross(b - a, c - a),
+        d - a
+    ) / 6.0
+
+
+volumes = signed_tetra_volumes(tetra)
+
+# Reject degenerate elements before attempting correction.
+# The tolerance is relative to the characteristic mesh volume.
+volume_tolerance = max(np.max(np.abs(volumes)) * 1e-12, 1e-15)
+
+if np.any(np.abs(volumes) <= volume_tolerance):
+    raise ValueError("Degenerate tetrahedral elements detected.")
+
+# Reverse only elements with negative orientation.
+negative = volumes < 0
+
+tetra[negative, 1], tetra[negative, 2] = (
+    tetra[negative, 2].copy(),
+    tetra[negative, 1].copy()
+)
+
+# Verify the corrected connectivity.
+corrected_volumes = signed_tetra_volumes(tetra)
+
+if not np.all(corrected_volumes > volume_tolerance):
+    raise ValueError("Tetrahedral orientation correction failed.")
+
+print(
+    "Orientation validation passed:",
+    len(tetra),
+    "positive-volume tetrahedra"
+)
 
 tetra_families = mesh.cell_data["cell_tags"][tetra_index]
 
