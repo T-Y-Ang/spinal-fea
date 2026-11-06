@@ -1,6 +1,6 @@
 # Spinal Finite Element Analysis (FEA)
 
-**Status:** Work in Progress — Baseline Model Preparation
+**Status:** Work in Progress — Mesh Validation and Interface Preparation Complete
 
 ## Overview
 
@@ -35,7 +35,13 @@ The initial stage uses an existing anatomical model containing two lumbar verteb
 - Identified the anatomical element groups representing L1, L2 and the intervertebral disc.
 - Developed a Python script to convert the MED mesh into a CalculiX-compatible input file.
 - Preserved the anatomical element sets and superior/inferior boundary node groups.
-- Performed preliminary investigations of mesh connectivity and geometric proximity between anatomical structures.
+- Investigated mesh connectivity and geometric proximity between anatomical structures.
+- Validated tetrahedral element orientation and corrected inverted connectivity for CalculiX.
+- Confirmed positive signed volumes for all 62,247 tetrahedral elements.
+- Identified anatomical vertebral endplate and disc-facing surface groups.
+- Generated six CalculiX-compatible anatomical surface definitions.
+- Visualised the L1, L2 and intervertebral disc regions using ParaView.
+- Quantified disc-to-endplate surface distances using triangular surface proximity analysis.
 
 **Mesh characteristics:**
 
@@ -57,12 +63,29 @@ Geometric proximity analysis identified closely positioned nodes between the ver
 
 These findings indicate that appropriate mechanical interface constraints must be established and validated before applying loads.
 
+**Interface geometry validation:**
+
+Disc-node-to-endplate surface proximity was investigated by measuring distances from disc-facing nodes to the continuous triangular vertebral endplate surfaces.
+
+| Measurement | L1–disc | Disc–L2 |
+|---|---:|---:|
+| Median distance | 0.00793 | 0.00791 |
+| Mean distance | 0.04850 | 0.02637 |
+| 95th percentile | 0.18832 | 0.08753 |
+| Maximum distance | 1.61073 | 0.65512 |
+| Nodes within 0.25 coordinate units | 96.0% | 97.6% |
+
+These measurements indicate close geometric alignment across most of both interfaces, although isolated discrepancies remain. Coordinate units have not yet been independently verified.
+
+The surface definitions are prepared for subsequent mechanical constraint testing. Successful load transfer and interface behaviour have not yet been demonstrated.
+
+
 **Remaining tasks:**
 
-- Verify mesh dimensions, coordinate units and anatomical orientation.
-- Visualise and inspect the three-dimensional geometry.
-- Validate mesh quality and identify vertebra–disc interface surfaces.
-- Implement and test suitable interface constraints.
+- Confirm coordinate units and complete mesh-quality assessment.
+- Examine outlying interface nodes and verify surface boundaries.
+- Implement and test suitable vertebra–disc interface constraints.
+- Develop a reproducible script for exporting interface surface definitions.
 - Assign simplified material properties.
 - Define boundary conditions and axial compression loading.
 - Execute the first CalculiX simulation.
@@ -155,13 +178,15 @@ Large imaging datasets, downloaded meshes and generated solver outputs are exclu
 - h5py
 - meshio
 - CalculiX 2.21
+- ParaView 6.0.1
+- trimesh
+- rtree
 - WSL Ubuntu
 
 **Planned or under consideration:**
 
 - Gmsh
 - 3D Slicer
-- ParaView
 
 ## Reproducibility
 
