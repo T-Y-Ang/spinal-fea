@@ -1,0 +1,47 @@
+** Preliminary L1-L2 axial compression and tie test
+*INCLUDE, INPUT=/mnt/c/GitHub/spinal-fea/mesh/L1-L2_calculix.inp
+*INCLUDE, INPUT=/mnt/c/GitHub/spinal-fea/mesh/L1-L2_interfaces.inp
+**
+** Simplified materials (assuming mm, N, MPa units)
+**
+*MATERIAL, NAME=BONE
+*ELASTIC
+1000., 0.30
+*MATERIAL, NAME=DISC_MATERIAL
+*ELASTIC
+10., 0.45
+**
+*SOLID SECTION, ELSET=L1, MATERIAL=BONE
+*SOLID SECTION, ELSET=L2, MATERIAL=BONE
+*SOLID SECTION, ELSET=DISC, MATERIAL=DISC_MATERIAL
+**
+** Vertebra-disc mechanical interfaces
+**
+*TIE, NAME=L1_DISC_INNER
+DISC_L1_INNER, L1_INFERIOR
+*TIE, NAME=L1_DISC_OUTER
+DISC_L1_OUTER, L1_INFERIOR
+*TIE, NAME=L2_DISC_INNER
+DISC_L2_INNER, L2_SUPERIOR
+*TIE, NAME=L2_DISC_OUTER
+DISC_L2_OUTER, L2_SUPERIOR
+**
+** Boundary conditions
+**
+*BOUNDARY
+L2_BOTTOM, 1, 3, 0.
+**
+*STEP
+*STATIC
+**
+** Positive Z is anatomically inferior in this mesh.
+** Prescribe 0.1 coordinate units of inferior displacement.
+**
+*BOUNDARY
+L1_TOP, 3, 3, 0.1
+**
+*NODE FILE
+U
+*EL FILE
+S, E
+*END STEP

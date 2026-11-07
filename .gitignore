@@ -62,3 +62,7 @@ data/metadata/*
 # Locally extracted imaging and patient annotations
 data/processed/
 mesh/L1-L2_calculix.inp
+
+# CalculiX generated solver files
+spooles.out
+*_WarnNodeMissTiedContact.nam
