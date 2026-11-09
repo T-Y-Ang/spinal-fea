@@ -104,6 +104,12 @@ Geometric and topological analysis using Python, SciPy, VTK and PyVista establis
 
 The peripheral mismatches may reflect anatomical geometry, mesh discretisation or imperfect interface alignment. Their mechanical significance remains unresolved.
 
+**Anatomical orientation**
+
+The following schematic illustrates the L1–L2 vertebral bodies, intervening intervertebral disc, and anatomical interfaces relevant to the finite element simulations.
+
+![L1–L2 anatomical orientation and vertebra–disc interfaces](outputs/figures/spinal_fea_anatomical_orientation.png)
+
 **L1 disc–vertebra interface**
 
 ![L1 disc–vertebra interface showing rejected tie nodes](outputs/figures/l1_interface_tie_failures.png)
