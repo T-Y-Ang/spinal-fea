@@ -66,3 +66,4 @@ mesh/L1-L2_calculix.inp
 # CalculiX generated solver files
 spooles.out
 *_WarnNodeMissTiedContact.nam
+outputs/figures/pyvista_render_test.png
