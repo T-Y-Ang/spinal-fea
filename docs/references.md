@@ -1,17 +1,12 @@
 # Spinal FEA — Literature References
 
-This bibliography records publications consulted during
-development and validation of the L1–L2 finite element model.
+This bibliography records publications consulted during development and validation of the L1–L2 finite element model.
 
-The notes describe their relevance to our modelling decisions.
-They do not imply that our model has reproduced or validated
-the published results.
+The notes describe their relevance to our modelling decisions. They do not imply that our model has reproduced or validated the published results.
 
 ## 1. Ibarz et al. (2013)
 
-**Title:** Development and Kinematic Verification of a
-Finite Element Model for the Lumbar Spine:
-Application to Disc Degeneration
+**Title:** Development and Kinematic Verification of a Finite Element Model for the Lumbar Spine: Application to Disc Degeneration
 
 **Journal:** The Scientific World Journal
 
@@ -22,25 +17,19 @@ Application to Disc Degeneration
 ### Relevance
 
 - Vertebrae and intervertebral discs were meshed separately.
-- Geometric congruency at vertebra–disc interfaces was considered
-  important for avoiding artificial stress concentrations.
+- Geometric congruency at vertebra–disc interfaces was considered important for avoiding artificial stress concentrations.
 - Abaqus tie constraints were used to connect the structures.
 - Mesh refinement was investigated.
 
 **Application to our project:**
-Supports investigating interface geometry and tie-constraint
-formulation rather than increasing tolerance without assessing
-its mechanical consequences.
+Supports investigating interface geometry and tie-constraint formulation rather than increasing tolerance without assessing its mechanical consequences.
 
 **Limitation:**
-The paper does not establish an appropriate numerical tie
-tolerance for our CalculiX model.
+The paper does not establish an appropriate numerical tie tolerance for our CalculiX model.
 
 ## 2. Warren et al. (2020)
 
-**Title:** Development and Validation of a Computationally
-Efficient Finite Element Model of the Human Lumbar Spine:
-Application to Disc Degeneration
+**Title:** Development and Validation of a Computationally Efficient Finite Element Model of the Human Lumbar Spine: Application to Disc Degeneration
 
 **Journal:** International Journal of Spine Surgery
 
@@ -52,21 +41,17 @@ Application to Disc Degeneration
 
 - Investigates computationally efficient lumbar modelling.
 - Demonstrates the value of simplified modelling approaches.
-- Emphasises comparison of predicted mechanical behaviour
-  against reference models or validation data.
+- Emphasises comparison of predicted mechanical behaviour against reference models or validation data.
 
 **Application to our project:**
-Supports the use of an initial simplified L1–L2 model before
-progressing to more anatomically complex simulations.
+Supports the use of an initial simplified L1–L2 model before progressing to more anatomically complex simulations.
 
 **Limitation:**
-This reference is not being used to justify a specific
-tie-tolerance value or interface-repair algorithm.
+This reference is not being used to justify a specific tie-tolerance value or interface-repair algorithm.
 
 ## 3. Wiczenbach et al. (2023)
 
-**Title:** Development and Validation of Lumbar Spine
-Finite Element Model
+**Title:** Development and Validation of Lumbar Spine Finite Element Model
 
 **Journal:** PeerJ
 
@@ -82,19 +67,14 @@ Finite Element Model
 - Evaluates mechanical behaviour under multiple loading modes.
 
 **Application to our project:**
-Illustrates that interface formulations should reflect
-the mechanical relationships between the modelled structures.
+Illustrates that interface formulations should reflect the mechanical relationships between the modelled structures.
 
 **Limitation:**
-Its contact formulations should not be transferred directly
-to our simplified bonded vertebra–disc interfaces without
-considering the differences in model construction.
+Its contact formulations should not be transferred directly to our simplified bonded vertebra–disc interfaces without considering the differences in model construction.
 
 ## 4. Schmidt et al. (2007)
 
-**Title:** Application of a Calibration Method Provides
-More Realistic Results for a Finite Element Model of a
-Lumbar Spinal Segment
+**Title:** Application of a Calibration Method Provides More Realistic Results for a Finite Element Model of a Lumbar Spinal Segment
 
 **Journal:** Clinical Biomechanics
 
@@ -106,33 +86,24 @@ Lumbar Spinal Segment
 
 - Examines calibration of lumbar finite element models.
 - Highlights the importance of experimental comparison.
-- Demonstrates that apparently acceptable baseline predictions
-  do not guarantee reliable predictions under altered conditions.
+- Demonstrates that apparently acceptable baseline predictions do not guarantee reliable predictions under altered conditions.
 
 **Application to our project:**
-Supports validating the model's mechanical response rather
-than adjusting numerical parameters merely to obtain
-plausible stiffness values.
+Supports validating the model's mechanical response rather than adjusting numerical parameters merely to obtain plausible stiffness values.
 
 **Limitation:**
-Does not provide a direct solution to the specific
-CalculiX tie-constraint problem identified in our model.
+Does not provide a direct solution to the specific CalculiX tie-constraint problem identified in our model.
 
 ## Literature-informed modelling decision
 
-The current priority is to investigate the geometry and
-connectivity of the vertebra–disc interfaces.
+The current priority is to investigate the geometry and connectivity of the vertebra–disc interfaces.
 
 Potential approaches include:
 
-1. Correcting the existing interface geometry while retaining
-   appropriate tie constraints.
+1. Correcting the existing interface geometry while retaining appropriate tie constraints.
 2. Constructing conforming meshes with shared interface nodes.
-3. Comparing the mechanical response of repaired models
-   against the existing simulations.
+3. Comparing the mechanical response of repaired models against the existing simulations.
 
-Further increases in tie tolerance alone are not considered
-a sufficient validation strategy.
+Further increases in tie tolerance alone are not considered a sufficient validation strategy.
 
-These decisions are provisional and subject to additional
-numerical testing and literature review.
+These decisions are provisional and subject to additional numerical testing and literature review. 
