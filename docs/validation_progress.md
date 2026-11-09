@@ -1,8 +1,8 @@
 # Spinal FEA — Validation Progress
 
-**Status:** Validation in progress  
-**Last completed:** Step 131  
-**Next:** Step 132 — Investigate peak-stress locations relative to the fixed L2 boundary.
+**Status:** Validation in progress
+**Last completed:** Step 144
+**Next:** Step 146 — Prepare 3D visualisation of the baseline simulations.
 
 ## Model
 
@@ -51,12 +51,94 @@ Increasing the tie tolerance substantially changes the calculated stress field.
 
 **Important:** Stress units, material properties, boundary-condition effects and mesh convergence have not yet been fully validated. Results are exploratory and should not be interpreted as clinically validated biomechanics.
 
+## Additional validation — Steps 132–143
+
+### Peak-stress location
+
+The maximum von Mises stress in both simulations occurs in L2,
+near its superior endplate rather than at the fixed inferior surface.
+
+- Original tolerance: node 10388
+- Tolerance 0.05: node 10200
+
+This reduces concern that the peak is located directly at the fixed
+boundary, but does not exclude stress concentrations caused by the
+tie constraints, element formulation or mesh geometry.
+
+### Material properties
+
+Both simulations use simplified, homogeneous, isotropic,
+linear-elastic materials.
+
+| Material | Young's modulus | Poisson's ratio |
+|---|---:|---:|
+| Vertebral bone | 1000 MPa | 0.30 |
+| Intervertebral disc | 10 MPa | 0.45 |
+
+These are exploratory modelling assumptions, not a validated
+representation of the heterogeneous vertebral bodies or disc.
+
+The model does not separately represent cortical bone, cancellous
+bone, annulus fibrosus or nucleus pulposus.
+
+### Reaction-force equilibrium
+
+Reaction forces were extracted from CalculiX FRD output using
+the FORC data block.
+
+| Measurement | Original tolerance | Tolerance 0.05 |
+|---|---:|---:|
+| L1 superior Fz | +397.320062 | +556.540011 |
+| L2 inferior Fz | -397.320065 | -556.539988 |
+| Net Fz residual | approximately -0.000002 | +0.000024 |
+
+Force values are in N, assuming consistent N-mm-MPa units.
+
+Both simulations demonstrate negligible global force imbalance
+relative to their axial reaction forces.
+
+### Effective axial stiffness
+
+The prescribed L1 superior displacement is +0.1 mm along Z.
+
+Effective axial stiffness was calculated as:
+
+k = abs(total L2 inferior Fz) / 0.1 mm
+
+| Measurement | Original tolerance | Tolerance 0.05 |
+|---|---:|---:|
+| Reaction-force magnitude | 397.320 N | 556.540 N |
+| Axial stiffness | 3973.201 N/mm | 5565.400 N/mm |
+| Untied disc nodes | 228 | 50 |
+
+Increasing the tie tolerance from the CalculiX default
+(approximately 0.01206) to 0.05 increased the calculated
+axial stiffness by 40.07%.
+
+This demonstrates substantial sensitivity of the global mechanical
+response to the disc-vertebra interface constraints.
+
+The modified model is not automatically more physiologically
+accurate simply because more nodes were successfully tied.
+
+### Outstanding limitations
+
+- 50 disc interface nodes remain untied at tolerance 0.05.
+- The influence of interface gaps and tie constraints remains unresolved.
+- Mesh convergence has not been demonstrated.
+- First-order tetrahedral elements and the nearly incompressible
+  disc material may introduce artificial numerical stiffness.
+- The simplified materials and boundary conditions are not
+  physiologically validated.
+- The model does not include facets, ligaments or muscle forces.
+- Results are suitable for an exploratory FEA demonstration,
+  not clinical inference.
+
 ## Next steps
 
-1. Step 132: Determine whether the maximum-stress nodes are close to the fixed inferior L2 boundary.
-2. Examine stress concentrations and potential boundary-condition artefacts.
-3. Verify material properties and physical units.
-4. Extract reaction forces and calculate effective axial stiffness.
-5. Generate displacement and von Mises stress visualisations in ParaView.
-6. Compare simulations and document limitations.
-7. Prepare the GitHub portfolio report.
+1. Prepare three-dimensional geometry and field visualisations.
+2. Compare displacement and von Mises stress distributions.
+3. Inspect interface regions and possible numerical artefacts.
+4. Consider targeted interface repair and mesh refinement.
+5. Document model limitations and sensitivity findings.
+6. Prepare the GitHub portfolio report.
