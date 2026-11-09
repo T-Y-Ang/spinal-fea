@@ -70,6 +70,24 @@ However, the visualisations do not independently establish whether the underlyin
 
 Further quantitative geometric investigation is required before modifying the mesh.
 
+### 3.3 Original MED Interface Topology
+
+Inspection of the original MED mesh established that the disc interfaces were deliberately divided into inner and outer surface families.
+
+Geometric analysis demonstrated that the inner interfaces form connected central patches with one closed boundary loop, whereas the outer interfaces form connected annular surfaces with two closed boundary loops.
+
+The median radial distances of the inner surfaces were approximately 11–12 mm, compared with 20–21 mm for the outer surfaces.
+
+All 50 nodes rejected by the 0.05 mm CalculiX tie constraints belong to these outer annular interface surfaces.
+
+Three-dimensional visualisation demonstrated peripheral clustering. XY-projected footprint analysis identified 10 rejected nodes outside the corresponding vertebral endplate footprints and 40 within them.
+
+These results support the interpretation that the remaining tie failures involve peripheral annular interface geometry.
+
+However, the distinction between physiological peripheral disc extension and geometric mismatch remains unresolved. The original surface topology alone does not establish the appropriate mechanical attachment conditions.
+
+The original geometry has therefore been preserved pending further mechanical verification and sensitivity analysis.
+
 ## 4. Identified interface problem
 
 The original simulation used the automatically calculated tie tolerance of approximately 0.01206 mm.
@@ -125,7 +143,7 @@ The observed stiffness difference must therefore be treated as an interface sens
 
 Further increases in tie tolerance will not be used as the primary strategy for correcting the interface.
 
-The next investigation will focus on geometric congruency, surface definitions and the feasibility of conforming meshes.
+Geometric investigation has confirmed central and annular interface topology and identified peripheral regions of incomplete tie attachment. The next priority is to visualise displacement and stress fields, assess possible interface-related numerical artefacts, and determine whether targeted interface refinement is warranted.
 
 The preferred approach will be selected after inspecting the existing mesh and considering published spinal finite element modelling methodologies.
 

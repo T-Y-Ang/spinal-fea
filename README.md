@@ -1,6 +1,6 @@
 # Spinal Finite Element Analysis (FEA)
 
-**Status:** Work in Progress — Mesh Validation and Interface Preparation Complete
+**Status:** Work in Progress — Baseline Compression Simulation Completed; Mechanical Validation Ongoing
 
 ## Overview
 
@@ -22,7 +22,7 @@ This repository documents the development process, including dataset selection, 
 
 ## Current Progress
 
-### Stage 1: Baseline L1–L2 Simulation — In Progress
+### Stage 1: Baseline L1–L2 Simulation — Completed (Exploratory)
 
 **Source model:** [L1–L2 finite element model — Zenodo](https://zenodo.org/records/3961334)
 
@@ -55,13 +55,86 @@ The initial stage uses an existing anatomical model containing two lumbar verteb
 | L1 superior boundary nodes | 815 |
 | L2 inferior boundary nodes | 929 |
 
+### Baseline Compression Simulation
+
+A simplified displacement-controlled axial compression simulation was implemented using CalculiX 2.21.
+
+**Model configuration**
+
+| Parameter | Configuration |
+|---|---|
+| Anatomy | L1, L2 and intervening intervertebral disc |
+| Mesh | 17,513 nodes; 62,247 first-order tetrahedral elements |
+| Vertebral material | Linear elastic, E = 1000 MPa, ν = 0.30 |
+| Disc material | Linear elastic, E = 10 MPa, ν = 0.45 |
+| Inferior boundary | L2 inferior surface fixed in X, Y and Z |
+| Superior boundary | L1 superior surface prescribed +0.1 mm displacement along Z |
+| Interface constraints | Four surface-based CalculiX tie constraints |
+| Units | N–mm–MPa |
+
+Two simulations were completed successfully, comparing the default CalculiX tie tolerance with an explicitly specified tolerance of 0.05 mm.
+
+**Preliminary results**
+
+| Measurement | Default tolerance | 0.05 mm tolerance |
+|---|---:|---:|
+| Untied disc nodes | 228 | 50 |
+| Axial reaction force | 397.320 N | 556.540 N |
+| Effective axial stiffness | 3973.201 N/mm | 5565.400 N/mm |
+| Maximum nodal displacement | 0.133626 mm | 0.132768 mm |
+| Maximum nodal von Mises stress | 0.987775 MPa | 1.579123 MPa |
+
+Both simulations demonstrated negligible global axial reaction-force imbalance.
+
+However, increasing the tie tolerance produced a **40.07% increase in calculated axial stiffness**, demonstrating substantial sensitivity to the disc–vertebra interface constraints.
+
+These findings represent numerical verification and sensitivity analysis, not physiological validation.
+
+### Vertebra–Disc Interface Investigation
+
+The original MED mesh contains separate inner and outer disc interface surface families.
+
+Geometric and topological analysis using Python, SciPy, VTK and PyVista established that:
+
+- Inner disc interfaces form connected central surface patches.
+- Outer disc interfaces form connected annular surfaces.
+- All 50 remaining rejected tie nodes occur on the peripheral annular interface surfaces.
+- Ten rejected nodes fall outside the XY-projected vertebral endplate footprints.
+- The remaining 40 rejected nodes lie within the projected footprints but exceed the 0.05 mm tie tolerance.
+
+The peripheral mismatches may reflect anatomical geometry, mesh discretisation or imperfect interface alignment. Their mechanical significance remains unresolved.
+
+**L1 disc–vertebra interface**
+
+![L1 disc–vertebra interface showing rejected tie nodes](outputs/figures/l1_interface_tie_failures.png)
+
+**L2 disc–vertebra interface**
+
+![L2 disc–vertebra interface showing rejected tie nodes](outputs/figures/l2_interface_tie_failures.png)
+
+The original mesh geometry has been preserved rather than artificially repositioning peripheral nodes or increasing tie tolerance further.
+
+For detailed methods and limitations, see:
+
+- [Interface methodology](docs/interface_methodology.md)
+- [Validation progress](docs/validation_progress.md)
+- [Literature references](docs/references.md)
+
+### Current Validation Status
+
+**Completed:** Baseline compression simulations, global force-equilibrium checks, axial stiffness calculation, interface sensitivity comparison, peripheral tie-node visualisation, and original MED interface topology investigation.
+
+**Outstanding:** Displacement and stress-field visualisation, mesh convergence assessment, evaluation of possible volumetric locking, interface refinement where justified, and comparison against appropriate experimental or published biomechanical reference data.
+
+The model is an exploratory computational demonstration and must not be interpreted as a clinically validated prediction of spinal loading or stability.
+
 **Preliminary connectivity findings:**
 
 The L1 vertebra, L2 vertebra and intervertebral disc are represented by separate element groups without shared interface nodes.
 
 Geometric proximity analysis identified closely positioned nodes between the vertebrae and disc, but no exactly coincident nodes.
 
-These findings indicate that appropriate mechanical interface constraints must be established and validated before applying loads.
+These findings motivated the use of surface-based tie constraints in the subsequent compression simulations. The resulting load transfer has been numerically investigated, although the interface formulation remains subject to further validation.
 
 **Interface geometry validation:**
 
@@ -77,22 +150,9 @@ Disc-node-to-endplate surface proximity was investigated by measuring distances 
 
 These measurements indicate close geometric alignment across most of both interfaces, although isolated discrepancies remain. Coordinate units have not yet been independently verified.
 
-The surface definitions are prepared for subsequent mechanical constraint testing. Successful load transfer and interface behaviour have not yet been demonstrated.
+The surface definitions were subsequently used in successful CalculiX compression simulations. Global force equilibrium was demonstrated, but the sensitivity of axial stiffness to tie tolerance indicates that interface behaviour remains an important source of numerical uncertainty.
 
-
-**Remaining tasks:**
-
-- Confirm coordinate units and complete mesh-quality assessment.
-- Examine outlying interface nodes and verify surface boundaries.
-- Implement and test suitable vertebra–disc interface constraints.
-- Develop a reproducible script for exporting interface surface definitions.
-- Assign simplified material properties.
-- Define boundary conditions and axial compression loading.
-- Execute the first CalculiX simulation.
-- Analyse displacement, stress and strain distributions.
-- Investigate sensitivity to material properties and boundary conditions.
-
-No completed FEA results are reported at this stage.
+The baseline compression simulations have been completed successfully. However, mechanical verification remains incomplete, and the model has not undergone physiological or experimental validation.
 
 ### Stage 2: Patient-Specific Compression Fracture Simulation — Planned
 
@@ -200,9 +260,16 @@ python scripts/convert_med_to_calculix.py
 
 The script reads `mesh/L1-L2.med` and produces `mesh/L1-L2_calculix.inp`, preserving the principal anatomical element groups and selected boundary node groups.
 
-The generated file contains mesh geometry and sets; it is not yet a complete executable mechanical simulation.
+The generated mesh file contains the anatomical geometry and element sets required for the mechanical model.
 
-Further documentation will be added for material assignments, interface constraints, loading conditions and solver execution.
+CalculiX input files were subsequently developed to define material properties, surface-based tie constraints, boundary conditions and displacement-controlled axial compression.
+
+The completed baseline simulations and associated numerical investigations are documented in:
+
+- [Validation progress](docs/validation_progress.md)
+- [Interface methodology](docs/interface_methodology.md)
+
+The original third-party mesh and generated solver result files are not redistributed in this repository.
 
 ## Limitations
 
@@ -210,7 +277,7 @@ This project is exploratory and intended for computational research and educatio
 
 Finite element predictions are sensitive to assumptions regarding material properties, loading conditions, boundary constraints, mesh quality and anatomical reconstruction.
 
-The initial model uses simplified anatomical regions and has not yet undergone mechanical verification or validation.
+The initial model uses simplified anatomical regions and material properties. Preliminary numerical verification has demonstrated global axial force equilibrium, but mesh convergence, interface robustness and experimental biomechanical validation remain outstanding.
 
 Results from future simulations must not be interpreted as validated clinical predictions of spinal instability, fracture progression or the need for surgical intervention.
 
@@ -224,6 +291,14 @@ Any future redistribution of derived geometry or meshes will require review of t
 
 ## Next Milestone
 
-**Establish a functioning baseline L1–L2 axial compression simulation in CalculiX.**
+**Complete mechanical field visualisation and numerical verification of the baseline L1–L2 compression model.**
 
-The immediate priority is to verify the geometry and coordinate system, establish mechanically appropriate vertebra–disc interfaces, and validate the model before interpreting stress or displacement results.
+The immediate priorities are to:
+
+1. Generate three-dimensional displacement and von Mises stress visualisations from the existing CalculiX results.
+2. Compare the mechanical response of the two interface-tolerance configurations.
+3. Examine potential interface-related stress concentrations and numerical artefacts.
+4. Assess mesh convergence and element-formulation limitations where feasible.
+5. Consolidate the validated numerical findings and explicitly document unresolved biomechanical assumptions.
+
+Following this baseline investigation, the project may progress to a patient-specific vertebral compression-fracture model using suitable publicly available CT imaging.
