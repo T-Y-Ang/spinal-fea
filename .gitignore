@@ -67,3 +67,8 @@ mesh/L1-L2_calculix.inp
 spooles.out
 *_WarnNodeMissTiedContact.nam
 outputs/figures/pyvista_render_test.png
+
+# VerSe 2019 original imaging and derived meshes
+# Keep medical imaging data and large intermediate geometry local.
+data/raw/
+mesh/verse004/
