@@ -36,12 +36,32 @@ plotter.add_mesh(
     scalar_bar_args={
         "title": "Displacement (mm)",
         "vertical": True,
-    },
+        "position_x": 0.82,
+        "position_y": 0.15,
+        "height": 0.65,
+    }
 )
 
+# ---------------------------------------------------------
+# ANATOMICAL CAMERA ORIENTATION
+# ---------------------------------------------------------
+#
+# The mesh uses positive Z as anatomically inferior.
+# Set negative Z as the camera's upward direction so that L1 appears above L2 in the rendered image.
+#
+# This changes only the visualisation, not the mesh or the underlying finite element results.
+
 plotter.add_axes()
-plotter.view_isometric()
-plotter.reset_camera()
+
+plotter.camera_position = [
+    (
+        mesh.center[0] + 180,
+        mesh.center[1] + 220,
+        mesh.center[2] + 70,
+    ),
+    mesh.center,
+    (0, 0, -1),
+]
 
 plotter.add_text(
     "L1-L2 Axial Compression: Displacement Magnitude",
@@ -83,15 +103,45 @@ stress_plotter.add_mesh(
     cmap="plasma",
     clim=[0, 1.6],
     show_edges=False,
+    # ---------------------------------------------------------
+    # STRESS COLOUR BAR POSITIONING
+    # ---------------------------------------------------------
+    #
+    # Move the colour bar inward to prevent its title
+    # from being clipped at the right edge.
+    #
+    # Use the same positioning as the displacement figure
+    # for a consistent presentation.
+
     scalar_bar_args={
         "title": "Von Mises stress (MPa)",
         "vertical": True,
-    },
+        "position_x": 0.82,
+        "position_y": 0.15,
+        "height": 0.65,
+    }
 )
 
+# ---------------------------------------------------------
+# ANATOMICAL CAMERA ORIENTATION
+# ---------------------------------------------------------
+#
+# Match the displacement visualisation camera.
+# Negative Z points upward on screen, placing L1 above L2.
+#
+# Using the same camera makes displacement and stress distributions easier to compare.
+
 stress_plotter.add_axes()
-stress_plotter.view_isometric()
-stress_plotter.reset_camera()
+
+stress_plotter.camera_position = [
+    (
+        mesh.center[0] + 180,
+        mesh.center[1] + 220,
+        mesh.center[2] + 70,
+    ),
+    mesh.center,
+    (0, 0, -1),
+]
 
 stress_plotter.add_text(
     "L1-L2 Axial Compression: Von Mises Stress",
@@ -129,11 +179,20 @@ diagnostic_plotter = pv.Plotter(
     window_size=(1400, 1000)
 )
 
+# ---------------------------------------------------------
+# TRANSLUCENT SURFACE FOR INTERNAL NODE VISUALISATION
+# ---------------------------------------------------------
+#
+# The maximum-stress node may be located inside the mesh.
+# A translucent surface allows the red location marker
+# to remain visible through the surrounding anatomy.
+
 diagnostic_plotter.add_mesh(
     surface,
     scalars="Von Mises Stress",
     cmap="plasma",
     clim=[0, 1.6],
+    opacity=0.35,
     show_scalar_bar=False,
 )
 
@@ -149,9 +208,26 @@ diagnostic_plotter.add_mesh(
     opacity=1.0,
 )
 
+# ---------------------------------------------------------
+# ANATOMICAL CAMERA ORIENTATION
+# ---------------------------------------------------------
+#
+# Match the displacement and von Mises stress figures.
+# Positive Z is anatomically inferior in this mesh.
+# Using negative Z as the camera-up vector places L1 above L2 without changing the simulation geometry.
+
 diagnostic_plotter.add_axes()
-diagnostic_plotter.view_isometric()
-diagnostic_plotter.reset_camera()
+
+diagnostic_plotter.camera_position = [
+    (
+        mesh.center[0] + 180,
+        mesh.center[1] + 220,
+        mesh.center[2] + 70,
+    ),
+    mesh.center,
+    (0, 0, -1),
+]
+
 diagnostic_plotter.set_background("white")
 
 diagnostic_plotter.add_text(
@@ -220,8 +296,28 @@ section_plotter.add_mesh(
     },
 )
 
-# View the section perpendicular to its cutting plane.
-section_plotter.view_yz()
+# ---------------------------------------------------------
+# ANATOMICAL CAMERA ORIENTATION — YZ CROSS-SECTION
+# ---------------------------------------------------------
+#
+# The section is perpendicular to the X-axis.
+# Position the camera along positive X, looking toward the centre of the section.
+#
+# Negative Z is anatomically superior in this mesh.
+# Setting camera-up to negative Z places L1 above L2.
+#
+# This changes only the viewing orientation.
+
+section_plotter.camera_position = [
+    (
+        section.center[0] + 200,
+        section.center[1],
+        section.center[2],
+    ),
+    section.center,
+    (0, 0, -1),
+]
+
 section_plotter.reset_camera()
 section_plotter.set_background("white")
 
