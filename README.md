@@ -1,6 +1,6 @@
 # Spinal Finite Element Analysis (FEA)
 
-**Status:** Work in Progress — Baseline Compression Simulation Completed; Mechanical Validation Ongoing
+**Status:** Work in Progress — Baseline Compression Simulation Completed; Patient-Specific Vertebral Reconstruction Completed; Disc Geometry Development Ongoing
 
 ## Overview
 
@@ -211,21 +211,78 @@ The surface definitions were subsequently used in successful CalculiX compressio
 
 The baseline compression simulations have been completed successfully. However, mechanical verification remains incomplete, and the model has not undergone physiological or experimental validation.
 
-### Stage 2: Patient-Specific Compression Fracture Simulation — Planned
+### Stage 2: Patient-Specific Compression Fracture Simulation — In Progress
 
-The second stage aims to develop an FEA model from an actual CT examination demonstrating vertebral compression fracture.
+**Dataset:** [VerSe 2019](https://github.com/anjany/verse)  
+**Selected case:** `sub-verse004`  
+**Anatomical region:** T12–L1–L2  
+**Current milestone:** Vertebral surface reconstruction completed; intervertebral disc geometry under development.
 
-**Planned workflow:**
+The second stage investigates patient-specific spinal biomechanics using CT-derived anatomy from a case demonstrating L1 vertebral compression deformity.
 
-1. Identify a suitable CT scan demonstrating a non-instrumented vertebral compression fracture.
-2. Segment the relevant vertebral anatomy.
-3. Reconstruct the three-dimensional pathological geometry.
-4. Generate a computational mesh.
-5. Assign material properties and mechanical boundary conditions.
-6. Simulate controlled loading.
-7. Investigate stress concentrations, deformation and mechanical behaviour.
+The intended model comprises T12, L1 and L2, together with reconstructed T12–L1 and L1–L2 intervertebral discs.
 
-This stage will build on the computational workflow developed during the baseline simulation.
+#### Vertebral Reconstruction
+
+Three-dimensional surfaces of T12, L1 and L2 have been reconstructed from the VerSe004 segmentation data.
+
+![CT-derived T12–L1–L2 vertebral reconstruction](outputs/figures/verse004_t12_l1_l2_alignment.png)
+
+*CT-derived reconstruction demonstrating the relative alignment of the three vertebrae.*
+
+#### Endplate Identification and Geometric Investigation
+
+Initial endplate identification used surface-normal filtering. Subsequent anatomical inspection demonstrated that this approach excluded portions of the curved L1 inferior endplate.
+
+![Comparison of filtered L1 inferior endplate and complete vertebral surface](outputs/figures/verse004_l1_inferior_selection_vs_full_surface.png)
+
+*Comparison demonstrating the limitations of surface-normal filtering when identifying curved vertebral endplates.*
+
+Further investigation used vertical ray tracing through the complete vertebral surfaces to estimate intervertebral separation.
+
+Across 400 sampled locations, 286 produced valid positive gap measurements. The median estimated separation was 8.42 mm, although anomalous values reached 44.61 mm.
+
+These are preliminary geometric measurements rather than validated anatomical disc-height measurements.
+
+![L1–L2 complete-surface gap map](outputs/figures/verse004_l1_l2_complete_surface_gap_map.png)
+
+*Spatial variation in estimated L1–L2 separation, demonstrating the need for anatomical restrictions and intersection validation.*
+
+#### Disc Geometry Development
+
+Initial elliptical disc footprints were investigated but appeared insufficient to represent the reconstructed vertebral anatomy.
+
+![Comparison of provisional intervertebral disc footprints](outputs/figures/verse004_l1_l2_footprint_comparison.png)
+
+*Comparison of provisional elliptical footprints used to inform the next stage of disc reconstruction.*
+
+The revised strategy is to construct an anatomically informed, kidney-shaped disc footprint using the CT-derived vertebral body contours, with a modest circumferential bulge introduced as an explicit modelling assumption.
+
+**Completed investigations:**
+
+- CT-derived reconstruction of T12, L1 and L2 surfaces.
+- Initial endplate identification and assessment of filtering limitations.
+- Investigation of connected surface regions.
+- Complete-surface vertical ray tracing and disc-space gap mapping.
+- Identification of multiple intersections and anomalous gap measurements.
+- Comparison of provisional disc footprints.
+- Documentation of methodological limitations and revised modelling decisions.
+
+**Outstanding work:**
+
+- Construct anatomically informed T12–L1 and L1–L2 disc volumes.
+- Generate and inspect volumetric finite element meshes.
+- Define material properties, mechanical interfaces and loading conditions.
+- Complete patient-specific compression simulations.
+- Perform numerical verification and assess biomechanical limitations.
+
+**Detailed technical documentation:**
+
+[VerSe004 Geometry Reconstruction and Disc-Space Investigation](docs/verse004_geometry_reconstruction.md)
+
+This report documents the troubleshooting process, geometric measurements, modelling decisions and limitations, with additional annotated figures.
+
+The patient-specific finite element simulation has not yet been completed or validated.
 
 ### Stage 3: Longitudinal Fracture Analysis — Conditional
 
@@ -254,9 +311,13 @@ The original MED mesh is retained locally and converted into CalculiX format usi
 
 [VerSe repository](https://github.com/anjany/verse)
 
-A potential source of vertebral CT imaging and segmentation annotations for subsequent patient-specific modelling.
+The VerSe 2019 dataset has been selected for the patient-specific reconstruction stage.
 
-The availability of suitable, confirmed compression-fracture cases requires further assessment.
+Case `sub-verse004`, demonstrating L1 vertebral compression deformity, was selected for exploratory modelling.
+
+CT-derived surfaces of T12, L1 and L2 have been reconstructed. Preliminary endplate identification, disc-space measurements and disc-footprint investigations have been completed.
+
+See the [VerSe004 geometry reconstruction report](docs/verse004_geometry_reconstruction.md) for the detailed methodology, figures, troubleshooting findings and limitations.
 
 ### UWSpineCT / BioMedIA
 
@@ -362,17 +423,28 @@ Any future redistribution of derived geometry or meshes will require review of t
 
 ## Next Milestone
 
-**Extend the baseline stress analysis and assess the numerical reliability of the L1–L2 compression model.**
+**Construct anatomically informed T12–L1 and L1–L2 intervertebral discs for the VerSe004 patient-specific FEA model.**
 
-The immediate priorities are to:
+The immediate priorities are:
 
-1. Generate axial normal stress (SZZ) visualisations to distinguish compressive and tensile stress distributions.
-2. Compare displacement and stress fields between the default and 0.05 mm tie-tolerance simulations.
-3. Investigate the localised stress concentration near the vertebral endplate–disc interface, including possible numerical artefacts.
-4. Assess mesh convergence, element-formulation limitations and potential volumetric locking where feasible.
-5. Evaluate the robustness of the vertebra–disc interface constraints and compare the model against appropriate published or experimental biomechanical reference data.
-6. Consolidate the findings into a reproducible technical report, explicitly distinguishing verified numerical results from unresolved biomechanical assumptions.
+1. Identify the opposing vertebral body endplate contours using the complete CT-derived surfaces.
+2. Develop a smoothed, kidney-shaped L1–L2 disc footprint, incorporating a modest circumferential bulge as an explicit modelling assumption.
+3. Generate a three-dimensional disc volume conforming to the opposing vertebral endplates, while avoiding artificial connections outside the supporting bone surfaces.
+4. Assess geometric quality, including intersections, gaps and surface continuity.
+5. Extend the reconstruction methodology to T12–L1.
+6. Generate volumetric meshes and prepare the patient-specific vertebra–disc assembly for exploratory finite element simulation.
 
-Following this baseline investigation, the project may progress to a patient-specific vertebral compression-fracture simulation using suitable publicly available CT imaging.
+The reconstruction methodology, troubleshooting findings and preliminary measurements are documented in the [VerSe004 geometry reconstruction report](docs/verse004_geometry_reconstruction.md).
 
-The baseline model remains an exploratory computational demonstration and has not undergone experimental or clinical validation.
+### Outstanding Baseline Model Validation
+
+Although the baseline L1–L2 compression simulation has been completed, further investigations remain necessary:
+
+- Visualise axial normal stress (SZZ) and compare stress fields between tie-tolerance configurations.
+- Investigate the localised stress concentration near the vertebra–disc interface.
+- Assess mesh convergence, element formulation and potential volumetric locking.
+- Evaluate interface constraints and compare results against appropriate published or experimental biomechanical reference data.
+
+These investigations remain important for establishing the numerical reliability of the baseline model.
+
+**Neither the baseline simulation nor the planned patient-specific model has undergone experimental or clinical validation.** Results must not be interpreted as validated predictions of spinal instability, fracture progression or treatment requirements.
